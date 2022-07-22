@@ -1,0 +1,111 @@
+[gd_scene load_steps=14 format=2]
+
+[ext_resource path="res://Sprites/IronMaster/idle/ironmaster_sword4.png" type="Texture" id=1]
+[ext_resource path="res://Sprites/IronMaster/idle/ironmaster_sword5.png" type="Texture" id=2]
+[ext_resource path="res://Sprites/IronMaster/idle/ironmaster_sword3.png" type="Texture" id=3]
+[ext_resource path="res://Sprites/IronMaster/idle/ironmaster_sword1.png" type="Texture" id=4]
+[ext_resource path="res://Sprites/IronMaster/idle/ironmaster_sword2.png" type="Texture" id=5]
+[ext_resource path="res://Scripts/Enemy.gd" type="Script" id=6]
+
+[sub_resource type="CapsuleShape2D" id=8]
+radius = 4.0
+height = 7.0
+
+[sub_resource type="SpriteFrames" id=1]
+animations = [ {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ), ExtResource( 3 ), ExtResource( 1 ), ExtResource( 2 ) ],
+"loop": true,
+"name": "idle",
+"speed": 4.0
+} ]
+
+[sub_resource type="Gradient" id=3]
+offsets = PoolRealArray( 0, 0.372671, 1 )
+colors = PoolColorArray( 0.907454, 0.361564, 0.361564, 1, 0.372671, 0.372671, 0.372671, 1, 0.555892, 0.162859, 0.162859, 1 )
+
+[sub_resource type="GradientTexture" id=4]
+gradient = SubResource( 3 )
+
+[sub_resource type="ParticlesMaterial" id=5]
+emission_shape = 1
+emission_sphere_radius = 4.15
+flag_disable_z = true
+direction = Vector3( 0, 0, 0 )
+gravity = Vector3( 0, 30, 3 )
+initial_velocity = 4.37
+angular_velocity = 720.0
+angular_velocity_random = 1.0
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = 39.22
+linear_accel_random = 0.81
+radial_accel = 9.8
+tangential_accel = 4.92
+angle = 11.2
+angle_random = 1.0
+scale = 1.24
+scale_random = 0.37
+color = Color( 1, 0.458824, 0.458824, 1 )
+color_ramp = SubResource( 4 )
+hue_variation = 0.05
+
+[sub_resource type="Animation" id=6]
+resource_name = "Death"
+length = 0.3
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.2 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ), Vector2( 1, 1e-05 ) ]
+}
+
+[sub_resource type="Animation" id=7]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("AnimatedSprite:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ Vector2( 1, 1 ) ]
+}
+
+[node name="Enemy" type="KinematicBody2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource( 6 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 0, 4 )
+rotation = 1.5708
+shape = SubResource( 8 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = SubResource( 1 )
+animation = "idle"
+playing = true
+
+[node name="Particles2D" type="Particles2D" parent="AnimatedSprite"]
+emitting = false
+amount = 5
+lifetime = 0.57
+one_shot = true
+speed_scale = 2.98
+explosiveness = 1.0
+process_material = SubResource( 5 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/Death = SubResource( 6 )
+anims/RESET = SubResource( 7 )
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
